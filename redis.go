@@ -8,72 +8,62 @@ import (
 // Redis is a wrapper for redigo redis client
 type Redis struct {
 	connection redis.Conn
-	issueCode  string
+}
+
+// Lists returns a wrapper to do all the operation of a list.
+func (r Redis) Lists(key string) *List {
+	return &List{Redis: r, key: key}
+}
+
+// Sets returns a wrapper to do all the operation of a set.
+func (r Redis) Sets(key string) *Set {
+	return &Set{Redis: r, key: key}
 }
 
 // Set creates a key-value and set the `value` for `key` and returns true if
 // successfully created the key-value
-func (r Redis) Set(key string, value string) bool {
+func (r Redis) Set(key string, value string) (bool, error) {
 	result, err := r.connection.Do("SET", key, value)
-	shark.PanicIfError(err)
+	if err != nil {
+		return false, err
+	}
 
-	return result.(string) == "OK"
+	return result.(string) == "OK", nil
 }
 
 // Get returns the value that has been set for `key`
-func (r Redis) Get(key string) string {
+func (r Redis) Get(key string) (string, error) {
 	value, err := redis.String(r.connection.Do("GET", key))
-	shark.PanicIfError(err)
+	if err != nil {
+		return "", err
+	}
 
-	return value
-}
-
-// LPush push `value` into `key` list from left and returns length of list
-func (r Redis) LPush(key string, value interface{}) int {
-	result, err := redis.Int(r.connection.Do("LPUSH", key, value))
-	shark.PanicIfError(err)
-
-	return result
-}
-
-// RPush push `value` into `key` list from right and returns length of list
-func (r Redis) RPush(key string, value interface{}) int {
-	result, err := redis.Int(r.connection.Do("RPUSH", key, value))
-	shark.PanicIfError(err)
-
-	return result
-}
-
-// LRange gets the elements in `key` list from `start` index to `end` index
-func (r Redis) LRange(key string, start int, end int) []interface{} {
-	values, err := redis.Values(r.connection.Do("LRANGE", key, start, end))
-	shark.PanicIfError(err)
-
-	return values
+	return value, nil
 }
 
 // Exists checks for `key` exists in the redis database
-func (r Redis) Exists(key string) bool {
+func (r Redis) Exists(key string) (bool, error) {
 	result, err := redis.Int(r.connection.Do("EXISTS", key))
-	shark.PanicIfError(err)
+	if err != nil {
+		return false, nil
+	}
 
-	return result > 0
+	return result > 0, nil
 }
 
 // FlushAll flushes all keys in the redis
-func (r Redis) FlushAll() {
+func (r Redis) FlushAll() error {
 	_, err := r.connection.Do("FLUSHALL")
-	shark.PanicIfError(err)
+
+	return err
 }
 
 // NewRedis initiate the redis object and returns it
-func NewRedis(url string, exceptionCode string) *Redis {
+func NewRedis(url string) *Redis {
 	connection, err := redis.DialURL(url)
-
 	shark.PanicIfError(err)
 
 	return &Redis{
 		connection: connection,
-		issueCode:  exceptionCode,
 	}
 }

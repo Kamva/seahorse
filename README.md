@@ -30,30 +30,31 @@ go get -u github.com/Kamva/seahorse
     - [ ] BLPOP
     - [ ] BRPOP
     - [ ] BRPOPLPUSH
-    - [ ] LINDEX
-    - [ ] LLEN
-    - [ ] LPOP
+    - [x] LINDEX
+    - [ ] LINSERT
+    - [x] LLEN
+    - [x] LPOP
     - [x] LPUSH
     - [x] LRANGE
-    - [ ] LREM
-    - [ ] LSET
+    - [x] LREM
+    - [x] LSET
     - [ ] LTRIM
-    - [ ] RPOP
-    - [ ] RPOPLPUSH
+    - [x] RPOP
+    - [x] RPOPLPUSH
     - [x] RPUSH
 - [ ] Sets
-    - [ ] SADD
-    - [ ] SCARD
-    - [ ] SDIFF
+    - [x] SADD
+    - [x] SCARD
+    - [x] SDIFF
     - [ ] SDIFFSTORE
     - [ ] SINTER
     - [ ] SINTERSTORE
-    - [ ] SISMEMBER
-    - [ ] SMEMBERS
-    - [ ] SMOVE
-    - [ ] SPOP
+    - [x] SISMEMBER
+    - [x] SMEMBERS
+    - [x] SMOVE
+    - [x] SPOP
     - [ ] SRANDMEMBER
-    - [ ] SREM
+    - [x] SREM
     - [ ] SUNION
     - [ ] SUNIONSTORE
 - [ ] Hashes
