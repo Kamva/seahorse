@@ -12,12 +12,12 @@ type Redis struct {
 
 // Lists returns a wrapper to do all the operation of a list.
 func (r Redis) Lists(key string) *List {
-	return &List{Redis: r, key: key}
+	return &List{redis: r, key: key}
 }
 
 // Sets returns a wrapper to do all the operation of a set.
 func (r Redis) Sets(key string) *Set {
-	return &Set{Redis: r, key: key}
+	return &Set{redis: r, key: key}
 }
 
 // Set creates a key-value and set the `value` for `key` and returns true if
