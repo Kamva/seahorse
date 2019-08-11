@@ -4,8 +4,8 @@ import "github.com/gomodule/redigo/redis"
 
 // List redis wrapper for list operations
 type List struct {
-	Redis
-	key string
+	redis Redis
+	key   string
 }
 
 // Index Returns the element at index index in the list stored at key. The index
@@ -15,7 +15,7 @@ type List struct {
 //
 // When the value at key is not a list, an error is returned.
 func (l List) Index(index int) (interface{}, error) {
-	result, err := l.connection.Do("LINDEX", l.key, index)
+	result, err := l.redis.connection.Do("LINDEX", l.key, index)
 	if err != nil {
 		return nil, err
 	}
@@ -27,7 +27,7 @@ func (l List) Index(index int) (interface{}, error) {
 // it is interpreted as an empty list and 0 is returned. An error is returned
 // when the value stored at key is not a list.
 func (l List) Length() (int, error) {
-	result, err := redis.Int(l.connection.Do("LLEN", l.key))
+	result, err := redis.Int(l.redis.connection.Do("LLEN", l.key))
 	if err != nil {
 		return 0, err
 	}
@@ -37,7 +37,7 @@ func (l List) Length() (int, error) {
 
 // LeftPop Removes and returns the first element of the list stored at key.
 func (l List) LeftPop() (interface{}, error) {
-	result, err := l.connection.Do("LPOP", l.key)
+	result, err := l.redis.connection.Do("LPOP", l.key)
 	if err != nil {
 		return nil, err
 	}
@@ -50,7 +50,7 @@ func (l List) LeftPop() (interface{}, error) {
 // push operations. When key holds a value that is not a list, an error is
 // returned.
 func (l List) LeftPush(value interface{}) (int, error) {
-	result, err := redis.Int(l.connection.Do("LPUSH", l.key, value))
+	result, err := redis.Int(l.redis.connection.Do("LPUSH", l.key, value))
 	if err != nil {
 		return 0, err
 	}
@@ -62,7 +62,7 @@ func (l List) LeftPush(value interface{}) (int, error) {
 // start and stop are zero-based indexes, with 0 being the first element of the
 // list (the head of the list), 1 being the next element and so on.
 func (l List) Range(start int, end int) ([]interface{}, error) {
-	values, err := redis.Values(l.connection.Do("LRANGE", l.key, start, end))
+	values, err := redis.Values(l.redis.connection.Do("LRANGE", l.key, start, end))
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +77,7 @@ func (l List) Range(start int, end int) ([]interface{}, error) {
 //      count < 0: Remove elements equal to value moving from tail to head.
 //      count = 0: Remove all elements equal to value.
 func (l List) Remove(value interface{}, occurrences int) (int, error) {
-	result, err := redis.Int(l.connection.Do("LREM", l.key, occurrences, value))
+	result, err := redis.Int(l.redis.connection.Do("LREM", l.key, occurrences, value))
 	if err != nil {
 		return 0, err
 	}
@@ -87,7 +87,7 @@ func (l List) Remove(value interface{}, occurrences int) (int, error) {
 
 // Set Sets the list element at index to value.
 func (l List) Set(index int, value interface{}) (bool, error) {
-	result, err := l.connection.Do("LSET", l.key, index, value)
+	result, err := l.redis.connection.Do("LSET", l.key, index, value)
 	if err != nil {
 		return false, err
 	}
@@ -97,7 +97,7 @@ func (l List) Set(index int, value interface{}) (bool, error) {
 
 // RightPop Removes and returns the last element of the list stored at key.
 func (l List) RightPop() (interface{}, error) {
-	result, err := l.connection.Do("RPOP", l.key)
+	result, err := l.redis.connection.Do("RPOP", l.key)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func (l List) RightPop() (interface{}, error) {
 // the list stored at source, and pushes the element at the first element (head)
 // of the list stored at destination.
 func (l List) RightPopLeftPush(newKey string) (interface{}, error) {
-	result, err := l.connection.Do("RPOPLPUSH", l.key, newKey)
+	result, err := l.redis.connection.Do("RPOPLPUSH", l.key, newKey)
 	if err != nil {
 		return nil, err
 	}
@@ -122,7 +122,7 @@ func (l List) RightPopLeftPush(newKey string) (interface{}, error) {
 // push operation. When key holds a value that is not a list, an error is
 // returned.
 func (l List) RightPush(value interface{}) (int, error) {
-	result, err := redis.Int(l.connection.Do("RPUSH", l.key, value))
+	result, err := redis.Int(l.redis.connection.Do("RPUSH", l.key, value))
 	if err != nil {
 		return 0, err
 	}
